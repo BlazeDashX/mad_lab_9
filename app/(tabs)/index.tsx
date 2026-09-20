@@ -19,6 +19,7 @@ import { router } from "expo-router";
 import { useStudents } from "../../context/students-context";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ErrorScreen from "../../components/error-screen";
+import SkeletonLoader from "../../components/skeleton-loader";
 
 export default function HomePage() {
     const [query, setQuery] = useState<string>("");
@@ -78,13 +79,29 @@ export default function HomePage() {
         );
     }, [query, debouncedQuery]);
 
-    // Loading & Error guards placed AFTER all hooks to adhere to React Rules of Hooks
+    // Feature 1: Skeleton Loading (4 marks) — replaces full-screen ActivityIndicator with 6 pulsing placeholder rows
     if (isLoading) {
         return (
-            <View style={styles.center}>
-                <ActivityIndicator size="large" color="#0D9488" />
-                <Text style={styles.loadingHint}>Loading students...</Text>
-            </View>
+            <SafeAreaView style={styles.screen}>
+                <View style={styles.titleBar}>
+                    <Text style={styles.title}>Student Directory</Text>
+                    <Pressable
+                        style={styles.addButton}
+                        onPress={() => router.push("/(tabs)/add-student")}
+                        accessibilityRole="button"
+                        accessibilityLabel="Add new student"
+                        accessibilityHint="Opens the Add Student form"
+                    >
+                        <Text style={styles.addButtonText}>+ Add</Text>
+                    </Pressable>
+                </View>
+                <SearchBar 
+                    ref={searchRef}
+                    value={query} 
+                    onChangeText={setQuery} 
+                />
+                <SkeletonLoader />
+            </SafeAreaView>
         );
     }
 
