@@ -5,12 +5,13 @@ import StudentItem from "@/components/student-item";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Student, STUDENTS } from "@/data/students";
 // Add useRef and useEffect to the import
-import React, { useRef, useEffect, useMemo, useState } from "react";
+import React, { useRef, useEffect, useMemo, useState, useCallback } from "react";
 import { Text, StyleSheet, View, FlatList, Pressable, ActivityIndicator } from "react-native";
 
 import { router } from "expo-router";
 import { useStudents } from "../../context/students-context";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ErrorScreen from "../../components/error-screen";
 
 // app/(tabs)/index.tsx — import TextInput (not to be used as part of UI, but the type is needed for useRef)
 import { TextInput } from "react-native";
@@ -38,23 +39,22 @@ export default function HomePage() {
     // const [students, setStudents] = useState<Student[]>(STUDENTS);
     // Read students directly from the global context
     const { students, isLoading, error } = useStudents();
+    const [retryKey, setRetryKey] = useState(0);
+    const handleRetry = useCallback(() => {
+        setRetryKey((k) => k + 1); // changing this key will re-mount the provider
+    }, []);
 
     if (isLoading) {
         return (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+            <View style={styles.center}>
                 <ActivityIndicator size="large" color="#0D9488" />
-                <Text style={{ marginTop: 12, color: "#64748B" }}>Loading students...</Text>
+                <Text style={styles.loadingHint}>Loading students...</Text>
             </View>
         );
     }
 
     if (error) {
-        return (
-            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", padding: 24 }}>
-                <Text style={{ fontSize: 18, fontWeight: "bold", color: "#EF4444" }}>Connection Error</Text>
-                <Text style={{ color: "#64748B", marginTop: 8, textAlign: "center" }}>{error}</Text>
-            </View>
-        );
+        return <ErrorScreen message={error} onRetry={handleRetry} />;
     }
 
     // No longer needed
@@ -134,4 +134,6 @@ const styles = StyleSheet.create({
     addButtonText: { color: "#FFFFFF", fontWeight: "700", fontSize: 13 },
     empty: { padding: 40, alignItems: "center" },
     emptyText: { fontSize: 14, color: "#94A3B8" },
+    center: { flex: 1, justifyContent: "center", alignItems: "center" },
+    loadingHint: { marginTop: 12, color: "#64748B", fontSize: 13 },
 });
