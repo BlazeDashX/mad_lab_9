@@ -45,6 +45,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "apiUrl": "http://localhost:3000",
+      "router": {},
+      "eas": {
+        "projectId": "297bcc08-3ebd-4d39-b3a6-8ad1e90d06f2"
+      }
     }
   }
 }
