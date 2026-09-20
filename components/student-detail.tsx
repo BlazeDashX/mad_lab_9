@@ -62,8 +62,19 @@ export default function StudentDetail({ student, onRemoved }: StudentDetailProps
                 ))}
             </View>
 
-            {/* Add this at the bottom of the card */}
-            <Pressable style={styles.removeButton} onPress={handleRemove}>
+            {/*
+              ACCESSIBILITY AUDIT FIX:
+              - Missing accessibilityRole, accessibilityLabel, and accessibilityHint on the destructive remove button.
+              - Screen readers could not clearly announce what item would be removed or that confirmation is required.
+              - Fixed by adding accessibilityRole="button", accessibilityLabel with student name, and accessibilityHint.
+            */}
+            <Pressable
+                style={styles.removeButton}
+                onPress={handleRemove}
+                accessibilityRole="button"
+                accessibilityLabel={`Remove ${student.name} from the directory`}
+                accessibilityHint="Shows a confirmation dialog before removing"
+            >
                 <Text style={styles.removeText}>Remove from Directory</Text>
             </Pressable>
         </View>

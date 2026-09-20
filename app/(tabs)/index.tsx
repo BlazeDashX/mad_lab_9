@@ -96,8 +96,18 @@ export default function HomePage() {
         <SafeAreaView key={retryKey} style={styles.screen}>
             <View style={styles.titleBar}>
                 <Text style={styles.title}>Student Directory</Text>
-                {/* Navigate to the AddStudent screen — no prop passing needed */}
-                <Pressable style={styles.addButton} onPress={() => router.push("/(tabs)/add-student")}>
+                {/*
+                  ACCESSIBILITY AUDIT FIX:
+                  - "+ Add" button was missing semantic accessibility attributes.
+                  - Fixed by adding accessibilityRole="button", accessibilityLabel="Add new student", and accessibilityHint="Opens the Add Student form".
+                */}
+                <Pressable
+                    style={styles.addButton}
+                    onPress={() => router.push("/(tabs)/add-student")}
+                    accessibilityRole="button"
+                    accessibilityLabel="Add new student"
+                    accessibilityHint="Opens the Add Student form"
+                >
                     <Text style={styles.addButtonText}>+ Add</Text>
                 </Pressable>
             </View>

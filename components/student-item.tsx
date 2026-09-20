@@ -1,6 +1,6 @@
 // components/student-item.tsx
 
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { Student } from "../data/students";
 import React from "react";
 
@@ -12,10 +12,30 @@ interface StudentItemProps {
 }
 
 export default function StudentItem({ student, onPress, isSelected }: StudentItemProps) {
+    // ACCESSIBILITY AUDIT FIX:
+    // - Missing accessible, accessibilityRole, accessibilityLabel, and accessibilityHint on the list item row.
+    // - Screen readers could not announce this row as an interactive item or provide context.
+    // - Fixed by adding accessible={true}, accessibilityRole="button", accessibilityLabel, and accessibilityHint.
     return (
-        <TouchableOpacity style={[styles.row, isSelected && styles.rowSelected]} onPress={() => onPress(student)} activeOpacity={0.7}>
-            {/* Avatar image */}
-            <Image source={{ uri: student.avatarUrl }} style={styles.avatar} resizeMode="cover" />
+        <Pressable
+            style={[styles.row, isSelected && styles.rowSelected]}
+            onPress={() => onPress(student)}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={`${student.name}, ${student.department}`}
+            accessibilityHint="Tap to view full profile"
+        >
+            {/*
+              ACCESSIBILITY AUDIT FIX:
+              - Avatar Image was missing accessibilityLabel, causing screen readers to announce an unlabelled image.
+              - Fixed by adding accessibilityLabel with student name.
+            */}
+            <Image
+                source={{ uri: student.avatarUrl }}
+                style={styles.avatar}
+                resizeMode="cover"
+                accessibilityLabel={`Profile photo of ${student.name}`}
+            />
 
             {/* Text content */}
             <View style={styles.info}>
@@ -29,8 +49,10 @@ export default function StudentItem({ student, onPress, isSelected }: StudentIte
             </View>
 
             {/* Chevron indicator */}
-            <Text style={styles.chevron}>{isSelected ? "▲" : "▶"}</Text>
-        </TouchableOpacity>
+            <Text style={styles.chevron} accessibilityElementsHidden={true} importantForAccessibility="no">
+                {isSelected ? "▲" : "▶"}
+            </Text>
+        </Pressable>
     );
 }
 

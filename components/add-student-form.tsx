@@ -166,7 +166,18 @@ export default function AddStudentForm() {
         <ScrollView style={styles.container}>
             <View style={styles.headerRow}>
                 <Text style={styles.heading}>Join the Directory</Text>
-                <Pressable onPress={() => router.back()} style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}>
+                {/*
+                  ACCESSIBILITY AUDIT FIX:
+                  - Missing accessibilityRole, accessibilityLabel, and accessibilityHint on Close button.
+                  - Fixed by adding accessibilityRole="button", accessibilityLabel="Close", and accessibilityHint="Returns to the previous screen".
+                */}
+                <Pressable
+                    onPress={() => router.back()}
+                    style={({ pressed }) => [{ opacity: pressed ? 0.6 : 1 }]}
+                    accessibilityRole="button"
+                    accessibilityLabel="Close"
+                    accessibilityHint="Returns to the previous screen"
+                >
                     <Text style={styles.closeText}>Close</Text>
                 </Pressable>
             </View>
@@ -191,7 +202,19 @@ export default function AddStudentForm() {
 
             <FormField label="Skills (comma-separated)" value={formData.skillsText} onChangeText={(text) => updateField("skillsText", text)} placeholder="e.g. React Native, TypeScript, Figma" autoCapitalize="none" />
 
-            <Pressable style={[styles.button, !isFormValid && styles.buttonDisabled]} onPress={handleSubmitPress} disabled={!isFormValid || isSubmitting}>
+            {/*
+              ACCESSIBILITY AUDIT FIX:
+              - Form submit button lacked accessibility metadata for screen readers.
+              - Fixed by adding accessibilityRole="button", accessibilityLabel="Join Directory", and accessibilityHint.
+            */}
+            <Pressable
+                style={[styles.button, !isFormValid && styles.buttonDisabled]}
+                onPress={handleSubmitPress}
+                disabled={!isFormValid || isSubmitting}
+                accessibilityRole="button"
+                accessibilityLabel="Join Directory"
+                accessibilityHint="Submits student information to the directory"
+            >
                 {isSubmitting ? <ActivityIndicator color="#FFFFFF" /> : <Text style={styles.buttonText}>Join Directory</Text>}
             </Pressable>
         </ScrollView>
